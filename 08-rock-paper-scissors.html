@@ -6,20 +6,34 @@
 <body>
 <button onclick="
       const playerMove = 'rock';
-      playGame(playerMove, computerMove);
+      playGame(playerMove);
     ">Rock</button>
 
 <button onclick="
       const playerMove = 'paper';
-      playGame(playerMove, computerMove);
+      playGame(playerMove);
     ">Paper</button>
 
 <button onclick="
       const playerMove = 'scissors';
-      playGame(playerMove, computerMove);
+      playGame(playerMove);
     ">Scissors</button>
 
+<button onclick="
+      score.wins = 0;
+      score.losses = 0;
+      score.ties = 0;
+      localStorage.removeItem('score');
+    ">Reset Score</button>
+
 <script>
+  // when score is null, default is 0 for all score values
+  let score = JSON.parse(localStorage.getItem('score')) || {
+    wins: 0,
+    losses: 0,
+    ties: 0
+  };
+
   function playGame(playerMove) {
     let res = '';
     const computerMove = pickComputerMove();
@@ -50,8 +64,18 @@
       }
     }
 
+    if (res === 'Tie') {
+      score.ties++;
+    } else if (res === 'You lose!') {
+      score.losses++;
+      } else {
+      score.wins++;
+    }
+    // saving to local storage lets u keep the scores even after refresh, but must be stored as string (JSON format)
+    localStorage.setItem('score', JSON.stringify(score));
 
-    alert(`You chose ${playerMove}. Computer chose ${computerMove}. ${res}`);
+    alert(`You chose ${playerMove}. Computer chose ${computerMove}. ${res}`
+    + `\nWins: ${score.wins}, Losses: ${score.losses}, Ties: ${score.ties}`);
   }
 
   function pickComputerMove() {
